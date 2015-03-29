@@ -55,10 +55,10 @@ namespace Assets.Code.UnityBehaviours
             var gameDataProvider = new GameDataProvider();
             _resolver.RegisterItem(gameDataProvider);
 
-            //// canvas provider
-            //var canvasProvider = new CanvasProvider();
-            //_unityReference.LoadCanvases(canvasProvider);
-            //_resolver.RegisterItem(canvasProvider);
+            // canvas provider
+            var canvasProvider = new CanvasProvider();
+            _unityReference.LoadCanvases(canvasProvider);
+            _resolver.RegisterItem(canvasProvider);
             #endregion
 
             /* BEGIN STATE */
