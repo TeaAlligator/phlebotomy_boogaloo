@@ -1,4 +1,5 @@
-﻿using Assets.Code.DataPipeline;
+﻿using System;
+using Assets.Code.DataPipeline;
 using Assets.Code.DataPipeline.Providers;
 using Assets.Code.Messaging;
 using Assets.Code.Messaging.Messages;
@@ -15,6 +16,8 @@ namespace Assets.Code.States
         private readonly CanvasProvider _canvasProvider;
         private UiManager _uiManager;
 
+        private int _currentStage;
+
         /* REFERENCES */
 
         /* TOKENS */
@@ -28,6 +31,8 @@ namespace Assets.Code.States
 
         public override void Initialize()
         {
+            _currentStage = 0;
+
             _uiManager = new UiManager();
             _uiManager.RegisterUi(new PlayStateCanvasController(_messager, _canvasProvider.GetCanvas("play_canvas")));
 
@@ -49,6 +54,33 @@ namespace Assets.Code.States
 
         public void OnTalkButtonClicked(TalkButtonClickedMessage message)
         {
+            var Message = new PatientTalkMessage();
+
+            switch (_currentStage)
+            {
+                case 0:
+                case 1:
+                    Message.Text = "I'm Adam Sandler.";
+                    _currentStage = Math.Min(1, _currentStage);
+                    break;
+                case 2:
+                    Message.Text = "Sure, go ahead.";
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    Message.Text = "...";
+                    break;
+                case 7:
+                case 8:
+                    Message.Text = "Thanks";
+                    break;
+                default:
+                    Message.Text = "Alright, I'll be going now";
+                    break;
+            }
+
             _messager.Publish(new PatientTalkMessage());
         }
 

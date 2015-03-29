@@ -18,7 +18,7 @@ namespace Assets.Code.Ui.CanvasControllers
 
         private readonly GameObject _patientSpeechBubble;
         private readonly Text       _patientSpeechBubbleText;
-        private readonly Button _talkButton;
+        private readonly Button     _talkButton;
 
         /* TOKENS */
         private readonly MessagingToken _onPatientTalk;
@@ -51,6 +51,7 @@ namespace Assets.Code.Ui.CanvasControllers
         {
             _patientSpeechBubbleTimer = 0;
             _patientSpeechBubble.SetActive(true);
+            _patientSpeechBubbleText.text = message.Text;
         }
 
         public override void Update()

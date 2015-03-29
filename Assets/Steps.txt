@@ -1,0 +1,25 @@
+
+TALKING STAGE
+0- Press talk to verify identity
+1- Drag tourniquet onto them to tie it on them
+2- Press talk to get consent
+
+DRAW STAGE
+3- Drag an appropriate vial to the needle (loads it)
+4- Click on the needle to start draw
+5- Once it's done, drag the tube from the needle to the label table
+6- If more tubes are needed, go to step 4 (except you can skip step 5)
+
+FINISHED DRAW STAGE
+7- Click on the needle to stop drawing (remove needle from patient)
+8- Click on tourniquet to remove it (Or drag it away)
+
+LABEL STAGE
+9- Drag a new label out from the label box
+10- Fill the label in using doctors note information
+11- Drag it onto one of tubes
+12- IF more lables are needed, go to step 8
+
+DISPOSE STAGE
+13- Drag labeled samples into storage container
+14- Drag needle into the sharps container   
