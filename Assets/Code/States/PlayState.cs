@@ -1,6 +1,7 @@
 ﻿using Assets.Code.DataPipeline;
 using Assets.Code.DataPipeline.Providers;
 using Assets.Code.Messaging;
+using Assets.Code.Messaging.Messages;
 using Assets.Code.UI;
 using Assets.Code.Ui.CanvasControllers;
 using UnityEngine;
@@ -27,10 +28,15 @@ namespace Assets.Code.States
 
         public override void Update()
         {
+            _uiManager.Draw();
         }
 
         public override void HandleInput()
         {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                _messager.Publish(new PatientTalkMessage());
+            }
         }
 
         public void TalkButtonPressed()

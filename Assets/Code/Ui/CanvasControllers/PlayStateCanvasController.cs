@@ -9,6 +9,10 @@ namespace Assets.Code.Ui.CanvasControllers
 {
     public class PlayStateCanvasController : BaseCanvasController
     {
+        /* PROPERTIES */
+        private float _patientSpeechBubbleTimer;
+        private readonly float _patientSpeechBubbleDisplayTime;
+
         /* REFERENCES */
         private readonly Messager _messager;
 
@@ -19,13 +23,18 @@ namespace Assets.Code.Ui.CanvasControllers
         /* TOKENS */
         private readonly MessagingToken _onPatientTalk;
 
+
         public PlayStateCanvasController(Messager messager, Canvas canvasView)
             : base(canvasView)
         {
+            _patientSpeechBubbleTimer = -1;
+            _patientSpeechBubbleDisplayTime = 2f;
+
             _messager = messager;
 
             _patientSpeechBubble = GetElement("PatientSpeechBubble");
             _patientSpeechBubbleText = _patientSpeechBubble.transform.GetChild(0).GetComponent<Text>();
+            _patientSpeechBubble.SetActive(false);
             _talkButton = GetElement<Button>("TalkButton");
 
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
@@ -40,7 +49,22 @@ namespace Assets.Code.Ui.CanvasControllers
 
         private void OnPatientTalk(PatientTalkMessage message)
         {
-            
+            _patientSpeechBubbleTimer = 0;
+            _patientSpeechBubble.SetActive(true);
+        }
+
+        public override void Update()
+        {
+            if (_patientSpeechBubbleTimer != -1)
+            {
+                _patientSpeechBubbleTimer += Time.smoothDeltaTime;
+
+                if (_patientSpeechBubbleTimer > _patientSpeechBubbleDisplayTime)
+                {
+                    _patientSpeechBubbleTimer = -1;
+                    _patientSpeechBubble.SetActive(false);
+                }
+            }
         }
 
         public new void TearDown()
