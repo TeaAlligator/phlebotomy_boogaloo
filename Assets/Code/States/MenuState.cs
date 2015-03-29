@@ -50,6 +50,8 @@ namespace Assets.Code.States
         public override void TearDown()
 		{
 			_messager.CancelSubscription(_stateChangedToken);
+
+			_uiManager.TearDown();
         }
 
 		public void OnStateChange(StateChangedMessage input)
