@@ -62,7 +62,7 @@ namespace Assets.Code.UnityBehaviours
             #endregion
 
             /* BEGIN STATE */
-            _currentState = new PlayState(_resolver);
+            _currentState = new MenuState(_resolver);
             _currentState.Initialize();
 
             /* SUBSCRIBE FOR GAME END */

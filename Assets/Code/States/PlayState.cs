@@ -34,7 +34,7 @@ namespace Assets.Code.States
         private MessagingToken _onTalkButtonClicked;
         private static PatientGenerator _patientGenerator = new PatientGenerator();
 
-        private Canvas _menuCanvas;
+        private Canvas _playCanvas;
 		private Tube _tube;
 
         public PlayState(IoCResolver resolver) : base(resolver)
@@ -54,10 +54,10 @@ namespace Assets.Code.States
             _onTalkButtonClicked = _messager.Subscribe<TalkButtonClickedMessage>(OnTalkButtonClicked);
 
             _patientGenerator = new PatientGenerator();
-            _menuCanvas = _canvasProvider.GetCanvas("menu_canvas");
-            _menuCanvas.gameObject.SetActive(true);
+			_playCanvas = _canvasProvider.GetCanvas("play_canvas");
+			_playCanvas.gameObject.SetActive(true);
 			var tubeSlider = GameObject.Instantiate(_prefabProvider.GetPrefab("Slider"));
-			tubeSlider.transform.SetParent(_menuCanvas.transform);
+			tubeSlider.transform.SetParent(_playCanvas.transform);
 			tubeSlider.transform.localScale = new Vector3(-10, 10, 1);
 			tubeSlider.transform.localPosition = new Vector3(0, 0, 0);
 			_tube = tubeSlider.GetComponent<Tube>();
@@ -75,6 +75,10 @@ namespace Assets.Code.States
             {
                 _messager.Publish(new PatientTalkMessage());
             }
+			if (Input.GetKeyDown(KeyCode.Escape))
+			{
+				SwitchState(new MenuState(_resolver));
+			}
         }
 
         public void OnTalkButtonClicked(TalkButtonClickedMessage message)
