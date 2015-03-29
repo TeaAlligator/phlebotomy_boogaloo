@@ -13,7 +13,7 @@ namespace Assets.Code
         public string WristbandLastName;
         public Guid Id;
         public Guid WristbandId;
-        public test DoctorsOrders;
+        public TestType DoctorsOrders;
         public bool Rebellious;
     }
 }

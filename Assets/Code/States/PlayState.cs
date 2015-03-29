@@ -1,4 +1,5 @@
-﻿using System;
+﻿﻿using System;
+﻿using System.Runtime.InteropServices;
 using Assets.Code.DataPipeline;
 using Assets.Code.DataPipeline.Providers;
 using Assets.Code.Messaging;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Assets.Code.States
 {
-    public enum error
+    public enum MistakeType
     {
         NameMismatch = 0,
         IdMismatch,
@@ -22,6 +23,7 @@ namespace Assets.Code.States
         /* PROPERTIES */
         private readonly Messager _messager;
         private readonly CanvasProvider _canvasProvider;
+		private readonly PrefabProvider _prefabProvider;
         private UiManager _uiManager;
 
         private int _currentStage;
@@ -32,12 +34,14 @@ namespace Assets.Code.States
         private MessagingToken _onTalkButtonClicked;
         private static PatientGenerator _patientGenerator = new PatientGenerator();
 
-        private Patient _patient;
+        private Canvas _menuCanvas;
+		private Tube _tube;
 
         public PlayState(IoCResolver resolver) : base(resolver)
         {
             _resolver.Resolve(out _messager);
             _resolver.Resolve(out _canvasProvider);
+            _resolver.Resolve(out _prefabProvider);
         }
 
         public override void Initialize()
@@ -48,6 +52,16 @@ namespace Assets.Code.States
             _uiManager.RegisterUi(new PlayStateCanvasController(_messager, _canvasProvider.GetCanvas("play_canvas")));
 
             _onTalkButtonClicked = _messager.Subscribe<TalkButtonClickedMessage>(OnTalkButtonClicked);
+
+            _patientGenerator = new PatientGenerator();
+            _menuCanvas = _canvasProvider.GetCanvas("menu_canvas");
+            _menuCanvas.gameObject.SetActive(true);
+			var tubeSlider = GameObject.Instantiate(_prefabProvider.GetPrefab("Slider"));
+			tubeSlider.transform.SetParent(_menuCanvas.transform);
+			tubeSlider.transform.localScale = new Vector3(-10, 10, 1);
+			tubeSlider.transform.localPosition = new Vector3(0, 0, 0);
+			_tube = tubeSlider.GetComponent<Tube>();
+			_tube.StartDraw();
         }
 
         public override void Update()
@@ -102,23 +116,23 @@ namespace Assets.Code.States
 
         public void NewPatient()
         {
-            _patient = _patientGenerator.GeneratePatient();
+            //_patient = _patientGenerator.GeneratePatient();
         }
 
-        public void HandleMistake(error mistake)
+        public void HandleMistake(MistakeType mistake)
         {
             switch (mistake)
             {
-                case error.NameMismatch:
+                case MistakeType.NameMismatch:
                     NameMismatch();
                     break;
-                case error.IdMismatch:
+                case MistakeType.IdMismatch:
                     IdMismatch();
                     break;
-                case error.WrongTube:
+                case MistakeType.WrongTube:
                     WrongTube();
                     break;
-                case error.NoPermission:
+                case MistakeType.NoPermission:
                     NoPermission();
                     break;
             }
