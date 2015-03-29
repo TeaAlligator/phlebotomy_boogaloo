@@ -7,5 +7,6 @@
 		background.png
 		door.png
 		vial.png
+		vial_cap.png
 	}
 }
