@@ -18,6 +18,15 @@ namespace Assets.Code.States
         NoPermission
     }
 
+    public enum PlayStages
+    {
+        TalkStage = 0,
+        DrawStage,
+        FinishedDrawStage,
+        LabelStage,
+        WrapUpStage
+    }
+
     public class PlayState : BaseState
     {
         /* PROPERTIES */
@@ -26,16 +35,22 @@ namespace Assets.Code.States
 		private readonly PrefabProvider _prefabProvider;
         private UiManager _uiManager;
 
-        private int _currentStage;
+        private static PatientGenerator _patientGenerator = new PatientGenerator();
+        private Patient _currentPatient;
+
+        private Canvas _playCanvas;
+        private Tube _tube;
+
+        /* Stage changes / Conditionals */
+        private PlayStages _currentStage;
+
+        private bool _tourniquetOnPatient;
 
         /* REFERENCES */
 
         /* TOKENS */
         private MessagingToken _onTalkButtonClicked;
-        private static PatientGenerator _patientGenerator = new PatientGenerator();
-
-        private Canvas _playCanvas;
-		private Tube _tube;
+        private MessagingToken _onTourniquetOnPatient;
 
         public PlayState(IoCResolver resolver) : base(resolver)
         {
@@ -46,12 +61,14 @@ namespace Assets.Code.States
 
         public override void Initialize()
         {
-            _currentStage = 0;
+            _currentStage = PlayStages.TalkStage;
+            _tourniquetOnPatient = false;
 
             _uiManager = new UiManager();
             _uiManager.RegisterUi(new PlayStateCanvasController(_messager, _canvasProvider.GetCanvas("play_canvas")));
 
             _onTalkButtonClicked = _messager.Subscribe<TalkButtonClickedMessage>(OnTalkButtonClicked);
+            _onTourniquetOnPatient = _messager.Subscribe<TourniquetOnPatientMessage>(OnTourniquetOnPatient);
 
             _patientGenerator = new PatientGenerator();
 			_playCanvas = _canvasProvider.GetCanvas("play_canvas");
@@ -62,6 +79,7 @@ namespace Assets.Code.States
 			tubeSlider.transform.localPosition = new Vector3(0, 0, 0);
 			_tube = tubeSlider.GetComponent<Tube>();
 			_tube.StartDraw();
+            _currentPatient = _patientGenerator.GeneratePatient();
         }
 
         public override void Update()
@@ -81,36 +99,37 @@ namespace Assets.Code.States
 			}
         }
 
-        public void OnTalkButtonClicked(TalkButtonClickedMessage message)
+        private void OnTourniquetOnPatient(TourniquetOnPatientMessage message)
         {
-            var Message = new PatientTalkMessage();
+            _tourniquetOnPatient = true;
+        }
+
+        private void OnTalkButtonClicked(TalkButtonClickedMessage message)
+        {
+            var newMessage = new PatientTalkMessage();
 
             switch (_currentStage)
             {
-                case 0:
-                case 1:
-                    Message.Text = "I'm Adam Sandler.";
-                    _currentStage = Math.Min(1, _currentStage);
+                case PlayStages.TalkStage:
+                    if (!_tourniquetOnPatient)
+                    {
+                        newMessage.Text = "I'm " + _currentPatient.FirstName + " " + _currentPatient.LastName + ".";
+                        break;
+                    }
+                    newMessage.Text = "Sure, go ahead.";
                     break;
-                case 2:
-                    Message.Text = "Sure, go ahead.";
+                case PlayStages.DrawStage:
+                    newMessage.Text = "...";
                     break;
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                    Message.Text = "...";
+                case PlayStages.FinishedDrawStage:
+                    newMessage.Text = "Thanks";
                     break;
-                case 7:
-                case 8:
-                    Message.Text = "Thanks";
-                    break;
-                default:
-                    Message.Text = "Alright, I'll be going now";
+                case PlayStages.WrapUpStage:
+                    newMessage.Text = "Alright, I'll be going now";
                     break;
             }
 
-            _messager.Publish(Message);
+            _messager.Publish(newMessage);
         }
 
         public override void TearDown()

@@ -36,6 +36,7 @@ namespace Assets.Code.Ui.CanvasControllers
             _messager = messager;
 
             _patient = GetElement("Patient");
+            _patient.GetComponent<PatientDropbox>().Initialize(_messager);
             _patientSpeechBubble = GetElement("PatientSpeechBubble");
             _patientSpeechBubbleText = _patientSpeechBubble.transform.GetChild(0).GetComponent<Text>();
             _patientSpeechBubble.SetActive(false);

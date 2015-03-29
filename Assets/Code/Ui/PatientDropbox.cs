@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using Assets.Code.Messaging;
+using Assets.Code.Messaging.Messages;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Assets.Code.Ui
 {
-    public class Patient : MonoBehaviour, IDropHandler
+    public class PatientDropbox : MonoBehaviour, IDropHandler
     {
+        private Messager _messager;
+
         public GameObject FirstItem
         {
             get
@@ -15,25 +19,22 @@ namespace Assets.Code.Ui
             }
         }
 
+        public void Initialize(Messager messager)
+        {
+            _messager = messager;
+        }
+
         public void OnDrop(PointerEventData eventData)
         {
             var obj = DragHandler.ItemBeingDragged;
-            if (!obj)
+            if (!obj || obj.name != "Tourniquet")
                 return;
 
             if (transform.childCount < 1)
             {
                 obj.transform.SetParent(transform);
                 obj.transform.localPosition = Vector3.zero;
-            }
-            else
-            {
-                var child = FirstItem;
-                child.transform.position = obj.GetComponent<DragHandler>().StartPosition;
-                child.transform.SetParent(obj.GetComponent<DragHandler>().StartParent);
-            
-                obj.transform.SetParent(transform);
-                obj.transform.localPosition = Vector3.zero;
+                _messager.Publish(new TourniquetOnPatientMessage());
             }
         }
     }
