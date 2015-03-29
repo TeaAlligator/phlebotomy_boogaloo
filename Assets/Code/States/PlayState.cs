@@ -9,8 +9,17 @@ using UnityEngine;
 
 namespace Assets.Code.States
 {
+    public enum error
+    {
+        NameMismatch = 0,
+        IdMismatch,
+        WrongTube,
+        NoPermission
+    }
+
     public class PlayState : BaseState
     {
+<<<<<<< HEAD
         /* PROPERTIES */
         private readonly Messager _messager;
         private readonly CanvasProvider _canvasProvider;
@@ -22,6 +31,11 @@ namespace Assets.Code.States
 
         /* TOKENS */
         private MessagingToken _onTalkButtonClicked;
+=======
+        private static PatientGenerator _patientGenerator = new PatientGenerator();
+
+        private Patient _patient;
+>>>>>>> origin/master
 
         public PlayState(IoCResolver resolver) : base(resolver)
         {
@@ -41,7 +55,11 @@ namespace Assets.Code.States
 
         public override void Update()
         {
+<<<<<<< HEAD
             _uiManager.Draw();
+=======
+            NewPatient();
+>>>>>>> origin/master
         }
 
         public override void HandleInput()
@@ -87,6 +105,46 @@ namespace Assets.Code.States
         public override void TearDown()
         {
             _messager.CancelSubscription(_onTalkButtonClicked);
+        }
+
+        public void NewPatient()
+        {
+            _patient = _patientGenerator.GeneratePatient();
+        }
+
+        public void HandleMistake(error mistake)
+        {
+            switch (mistake)
+            {
+                case error.NameMismatch:
+                    NameMismatch();
+                    break;
+                case error.IdMismatch:
+                    IdMismatch();
+                    break;
+                case error.WrongTube:
+                    WrongTube();
+                    break;
+                case error.NoPermission:
+                    NoPermission();
+                    break;
+            }
+        }
+
+        private void NameMismatch()
+        {
+        }
+
+        private void IdMismatch()
+        {
+        }
+
+        private void WrongTube()
+        {
+        }
+
+        private void NoPermission()
+        {
         }
     }
 }
