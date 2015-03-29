@@ -30,8 +30,6 @@ namespace Assets.Code.States
         private Canvas _menuCanvas;
 		private Tube _tube;
 
-		private bool _fill = false;
-
         public PlayState(IoCResolver resolver) : base(resolver)
         {
             _patientGenerator = new PatientGenerator();
