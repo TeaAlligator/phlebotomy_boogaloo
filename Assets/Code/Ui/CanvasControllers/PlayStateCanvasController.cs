@@ -16,9 +16,12 @@ namespace Assets.Code.Ui.CanvasControllers
         /* REFERENCES */
         private readonly Messager _messager;
 
+        private readonly GameObject _patient;
         private readonly GameObject _patientSpeechBubble;
         private readonly Text       _patientSpeechBubbleText;
         private readonly Button     _talkButton;
+        private readonly GameObject _tourniquetTable;
+        private readonly GameObject _tourniquet;
 
         /* TOKENS */
         private readonly MessagingToken _onPatientTalk;
@@ -32,10 +35,13 @@ namespace Assets.Code.Ui.CanvasControllers
 
             _messager = messager;
 
+            _patient = GetElement("Patient");
             _patientSpeechBubble = GetElement("PatientSpeechBubble");
             _patientSpeechBubbleText = _patientSpeechBubble.transform.GetChild(0).GetComponent<Text>();
             _patientSpeechBubble.SetActive(false);
             _talkButton = GetElement<Button>("TalkButton");
+            _tourniquetTable = GetElement("TourniquetTable");
+            _tourniquet = _tourniquetTable.transform.GetChild(0).gameObject;
 
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
 
