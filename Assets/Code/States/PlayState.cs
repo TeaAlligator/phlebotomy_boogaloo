@@ -40,6 +40,7 @@ namespace Assets.Code.States
 
         private Canvas _playCanvas;
         private Tube _tube;
+		private GameObject _tubeSlider;
 
         /* Stage changes / Conditionals */
         private PlayStages _currentStage;
@@ -73,11 +74,11 @@ namespace Assets.Code.States
             _patientGenerator = new PatientGenerator();
 			_playCanvas = _canvasProvider.GetCanvas("play_canvas");
 			_playCanvas.gameObject.SetActive(true);
-			var tubeSlider = GameObject.Instantiate(_prefabProvider.GetPrefab("Slider"));
-			tubeSlider.transform.SetParent(_playCanvas.transform);
-			tubeSlider.transform.localScale = new Vector3(-10, 10, 1);
-			tubeSlider.transform.localPosition = new Vector3(0, 0, 0);
-			_tube = tubeSlider.GetComponent<Tube>();
+			_tubeSlider = GameObject.Instantiate(_prefabProvider.GetPrefab("Slider"));
+			_tubeSlider.transform.SetParent(_playCanvas.transform);
+			_tubeSlider.transform.localScale = new Vector3(2.5f, 10, 1);
+			_tubeSlider.transform.localPosition = new Vector3(723.24f, 118.9f, 0);
+			_tube = _tubeSlider.GetComponent<Tube>();
 			_tube.StartDraw();
             _currentPatient = _patientGenerator.GeneratePatient();
         }
@@ -134,7 +135,11 @@ namespace Assets.Code.States
 
         public override void TearDown()
         {
-            _messager.CancelSubscription(_onTalkButtonClicked);
+			_messager.CancelSubscription(_onTalkButtonClicked);
+
+			_uiManager.TearDown();
+
+			UnityEngine.Object.Destroy(_tubeSlider);
         }
 
         public void NewPatient()

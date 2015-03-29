@@ -30,6 +30,8 @@ namespace Assets.Code.Ui.CanvasControllers
 
 		public void PlayButtonClicked()
 		{
+			_playButton.onClick.RemoveAllListeners();
+			_exitButton.onClick.RemoveAllListeners();
 			_canvasView.gameObject.SetActive(false);
 			_messager.Publish(new StateChangedMessage { TargetStateType = typeof(PlayState) });
 		}

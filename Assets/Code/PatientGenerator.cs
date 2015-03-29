@@ -42,7 +42,8 @@ namespace Assets.Code
             "Heussein",
             "Blair",
             "Reagan",
-            "McDonald"
+            "McDonald",
+			"Hitler"
         };
 
         static readonly private List<string> FirstNames = new List<string>
