@@ -1,8 +1,15 @@
-﻿using Assets.Code.DataPipeline;
+﻿using System.Runtime.InteropServices;
+using System.Threading;
+using Assets.Code.DataPipeline;
+using Assets.Code.DataPipeline.Providers;
+using Assets.Code.Extensions;
+using Assets.Code.UnityBehaviours;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Code.States
 {
-    public enum error
+    public enum MistakeType
     {
         NameMismatch = 0,
         IdMismatch,
@@ -12,13 +19,33 @@ namespace Assets.Code.States
 
     public class PlayState : BaseState
     {
-        private static PatientGenerator _patientGenerator = new PatientGenerator();
+		private float _currentTime = 0;
+		private float _endTime = 0;
+        private CanvasProvider _canvasProvider;
+		private PrefabProvider _prefabProvider;
 
+        private static PatientGenerator _patientGenerator;
         private Patient _patient;
+
+        private Canvas _menuCanvas;
+		private Tube _tube;
+
+		private bool _fill = false;
 
         public PlayState(IoCResolver resolver) : base(resolver)
         {
-        }
+            _patientGenerator = new PatientGenerator();
+			_prefabProvider = resolver.Resolve<PrefabProvider>();
+            _canvasProvider = resolver.Resolve<CanvasProvider>();
+            _menuCanvas = _canvasProvider.GetCanvas("menu_canvas");
+            _menuCanvas.gameObject.SetActive(true);
+			var tubeSlider = Object.Instantiate(_prefabProvider.GetPrefab("Slider"));
+			tubeSlider.transform.SetParent(_menuCanvas.transform);
+			tubeSlider.transform.localScale = new Vector3(-10, 10, 1);
+			tubeSlider.transform.localPosition = new Vector3(0, 0, 0);
+			_tube = tubeSlider.GetComponent<Tube>();
+			_tube.StartDraw();
+        }	
 
         public override void Initialize()
         {
@@ -42,20 +69,20 @@ namespace Assets.Code.States
             _patient = _patientGenerator.GeneratePatient();
         }
 
-        public void HandleMistake(error mistake)
+        public void HandleMistake(MistakeType mistake)
         {
             switch (mistake)
             {
-                case error.NameMismatch:
+                case MistakeType.NameMismatch:
                     NameMismatch();
                     break;
-                case error.IdMismatch:
+                case MistakeType.IdMismatch:
                     IdMismatch();
                     break;
-                case error.WrongTube:
+                case MistakeType.WrongTube:
                     WrongTube();
                     break;
-                case error.NoPermission:
+                case MistakeType.NoPermission:
                     NoPermission();
                     break;
             }

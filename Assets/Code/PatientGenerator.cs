@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 namespace Assets.Code
 {
-    public enum test
+    public enum TestType
     {
         Standard = 0,
         BloodCultures,
@@ -26,65 +26,65 @@ namespace Assets.Code
 
     public class PatientGenerator
     {
-        static private int _wrongNameChance = 5;
-        static private int _wrongIdChance = 5;
-        static private int _rebeliousChance = 15;
-        static private List<string> _lastNames = new List<string>
-    {
-        "DaCunha",
-        "Laakes",
-        "Moni",
-        "Bush",
-        "Obama",
-        "Roosavelt",
-        "Bin Laden",
-        "Washington",
-        "Heussein",
-        "Blair",
-        "Reagan",
-        "McDonald"
-    };
+        private const int WrongNameChance = 5;
+        private const int WrongIdChance = 5;
+        private const int RebeliousChance = 15;
+        static readonly private List<string> LastNames = new List<string>
+        {
+            "DaCunha",
+            "Laakes",
+            "Moni",
+            "Bush",
+            "Obama",
+            "Roosavelt",
+            "Bin Laden",
+            "Washington",
+            "Heussein",
+            "Blair",
+            "Reagan",
+            "McDonald"
+        };
 
-        static private List<string> _firstNames = new List<string>
-    {
-        "Ryan",
-        "Asher",
-        "Rohit",
-        "George",
-        "Ted",
-        "Barack",
-        "Theodore",
-        "Osama",
-        "George",
-        "Saddam",
-        "Tony",
-        "Ronald",
-        "Teddy",
-        "Ronald"
-    };
+        static readonly private List<string> FirstNames = new List<string>
+        {
+            "Ryan",
+            "Asher",
+            "Rohit",
+            "George",
+            "Ted",
+            "Barack",
+            "Theodore",
+            "Osama",
+            "George",
+            "Saddam",
+            "Tony",
+            "Ronald",
+            "Teddy",
+            "Ronald"
+        };
 
         public Patient GeneratePatient()
         {
             Patient fab = new Patient();
 
-            fab.FirstName = _firstNames[Random.Range(0, _firstNames.Count)];
-            fab.LastName = _lastNames[Random.Range(0, _lastNames.Count)];
+            fab.FirstName = FirstNames[Random.Range(0, FirstNames.Count)];
+            fab.LastName = LastNames[Random.Range(0, LastNames.Count)];
 
             fab.WristbandFirstName = fab.FirstName;
             fab.WristbandLastName = fab.LastName;
-            if (Random.Range(0, 100) < _wrongNameChance)
+            if (Random.Range(0, 100) < WrongNameChance)
             {
                 do
                 {
-                    fab.WristbandFirstName = _firstNames[Random.Range(0, _firstNames.Count)];
-                    fab.WristbandLastName = _lastNames[Random.Range(0, _lastNames.Count)];
+                    fab.WristbandFirstName = FirstNames[Random.Range(0, FirstNames.Count)];
+                    fab.WristbandLastName = LastNames[Random.Range(0, LastNames.Count)];
                 } while (fab.WristbandFirstName == fab.FirstName && fab.WristbandLastName == fab.LastName);
             }
 
             fab.Id = Guid.NewGuid();
 
             fab.WristbandId = fab.Id;
-            if (Random.Range(0, 100) < _wrongIdChance)
+            if (Random.Range(0, 100) < WrongIdChance)
             {
                 do
                 {
@@ -93,13 +93,13 @@ namespace Assets.Code
             }
 
             fab.Rebellious = false;
-            if (Random.Range(0, 100) < _rebeliousChance)
+            if (Random.Range(0, 100) < RebeliousChance)
             {
                 fab.Rebellious = true;
             }
 
-            int numPossibleTests = Enum.GetNames(typeof(test)).Count();
-            fab.DoctorsOrders = (test)Random.Range(0, numPossibleTests);
+            int numPossibleTests = Enum.GetNames(typeof(TestType)).Count();
+            fab.DoctorsOrders = (TestType)Random.Range(0, numPossibleTests);
 
             return fab;
         }
