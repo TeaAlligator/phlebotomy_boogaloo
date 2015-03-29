@@ -22,9 +22,11 @@ namespace Assets.Code.Ui.CanvasControllers
         private readonly Button     _talkButton;
         private readonly GameObject _tourniquetTable;
         private readonly GameObject _tourniquet;
+		private readonly GameObject _doctorsOrdersObject;
 
         /* TOKENS */
         private readonly MessagingToken _onPatientTalk;
+		private readonly MessagingToken _newPatientToken;
 
 
         public PlayStateCanvasController(Messager messager, Canvas canvasView)
@@ -43,11 +45,20 @@ namespace Assets.Code.Ui.CanvasControllers
             _talkButton = GetElement<Button>("TalkButton");
             _tourniquetTable = GetElement("TourniquetTable");
             _tourniquet = _tourniquetTable.transform.GetChild(0).gameObject;
+			_doctorsOrdersObject = GetElement("DocsOrders");
 
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
 
             _onPatientTalk = _messager.Subscribe<PatientTalkMessage>(OnPatientTalk);
+			_newPatientToken = _messager.Subscribe<NewPatientMessage>(OnNewPatient);
         }
+
+		private void OnNewPatient(NewPatientMessage input)
+		{
+			_doctorsOrdersObject.transform.GetChild(0).GetComponent<Text>().text = "Name:\t" + input.NewPatient.WristbandFirstName + " " + input.NewPatient.WristbandLastName;
+			_doctorsOrdersObject.transform.GetChild(1).GetComponent<Text>().text = "ID:\t\t" + input.NewPatient.WristbandId;
+			_doctorsOrdersObject.transform.GetChild(2).GetComponent<Text>().text = "Test:\t\t" + input.NewPatient.DoctorsOrders.GetType();
+		}
 
         private void OnTalkButtonClicked()
         {
@@ -78,6 +89,7 @@ namespace Assets.Code.Ui.CanvasControllers
         public new void TearDown()
         {
             _messager.CancelSubscription(_onPatientTalk);
+			_messager.CancelSubscription(_newPatientToken);
 
             base.TearDown();
         }
