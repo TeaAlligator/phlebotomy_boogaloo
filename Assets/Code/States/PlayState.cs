@@ -19,7 +19,6 @@ namespace Assets.Code.States
 
     public class PlayState : BaseState
     {
-<<<<<<< HEAD
         /* PROPERTIES */
         private readonly Messager _messager;
         private readonly CanvasProvider _canvasProvider;
@@ -31,11 +30,9 @@ namespace Assets.Code.States
 
         /* TOKENS */
         private MessagingToken _onTalkButtonClicked;
-=======
         private static PatientGenerator _patientGenerator = new PatientGenerator();
 
         private Patient _patient;
->>>>>>> origin/master
 
         public PlayState(IoCResolver resolver) : base(resolver)
         {
@@ -55,11 +52,7 @@ namespace Assets.Code.States
 
         public override void Update()
         {
-<<<<<<< HEAD
             _uiManager.Draw();
-=======
-            NewPatient();
->>>>>>> origin/master
         }
 
         public override void HandleInput()
@@ -99,7 +92,7 @@ namespace Assets.Code.States
                     break;
             }
 
-            _messager.Publish(new PatientTalkMessage());
+            _messager.Publish(Message);
         }
 
         public override void TearDown()
