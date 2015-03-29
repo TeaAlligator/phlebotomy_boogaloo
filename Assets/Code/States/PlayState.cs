@@ -93,10 +93,14 @@ namespace Assets.Code.States
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 _messager.Publish(new PatientTalkMessage());
-            }
+			}
 			if (Input.GetKeyDown(KeyCode.Escape))
 			{
 				SwitchState(new MenuState(_resolver));
+			}
+			if (Input.GetKeyDown(KeyCode.Q))
+			{
+				NewPatient();
 			}
         }
 
@@ -144,7 +148,8 @@ namespace Assets.Code.States
 
         public void NewPatient()
         {
-            //_patient = _patientGenerator.GeneratePatient();
+			_currentPatient = _patientGenerator.GeneratePatient();
+			_messager.Publish(new NewPatientMessage { NewPatient = _currentPatient });
         }
 
         public void HandleMistake(MistakeType mistake)
