@@ -10,9 +10,15 @@ namespace Assets.Code.States
 {
     public class PlayState : BaseState
     {
+        /* PROPERTIES */
         private readonly Messager _messager;
         private readonly CanvasProvider _canvasProvider;
         private UiManager _uiManager;
+
+        /* REFERENCES */
+
+        /* TOKENS */
+        private MessagingToken _onTalkButtonClicked;
 
         public PlayState(IoCResolver resolver) : base(resolver)
         {
@@ -24,6 +30,8 @@ namespace Assets.Code.States
         {
             _uiManager = new UiManager();
             _uiManager.RegisterUi(new PlayStateCanvasController(_messager, _canvasProvider.GetCanvas("play_canvas")));
+
+            _onTalkButtonClicked = _messager.Subscribe<TalkButtonClickedMessage>(OnTalkButtonClicked);
         }
 
         public override void Update()
@@ -39,13 +47,14 @@ namespace Assets.Code.States
             }
         }
 
-        public void TalkButtonPressed()
+        public void OnTalkButtonClicked(TalkButtonClickedMessage message)
         {
-            Debug.Log("Talk Button Pressed!");
+            _messager.Publish(new PatientTalkMessage());
         }
 
         public override void TearDown()
         {
+            _messager.CancelSubscription(_onTalkButtonClicked);
         }
     }
 }
