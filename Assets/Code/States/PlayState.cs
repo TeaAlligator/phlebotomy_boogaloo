@@ -74,13 +74,14 @@ namespace Assets.Code.States
             _patientGenerator = new PatientGenerator();
 			_playCanvas = _canvasProvider.GetCanvas("play_canvas");
 			_playCanvas.gameObject.SetActive(true);
-			_tubeSlider = GameObject.Instantiate(_prefabProvider.GetPrefab("Slider"));
+			_tubeSlider = GameObject.Instantiate(_prefabProvider.GetPrefab("Vial"));
 			_tubeSlider.transform.SetParent(_playCanvas.transform);
-			_tubeSlider.transform.localScale = new Vector3(2.5f, 10, 1);
+			_tubeSlider.transform.localScale = new Vector3(-2.5f, 6, 1);
 			_tubeSlider.transform.localPosition = new Vector3(723.24f, 118.9f, 0);
 			_tube = _tubeSlider.GetComponent<Tube>();
+			_tube.Initialize(TestType.Edta);
 			_tube.StartDraw();
-            _currentPatient = _patientGenerator.GeneratePatient();
+            NewPatient();
         }
 
         public override void Update()
