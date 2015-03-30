@@ -4,8 +4,10 @@
 	}
 	Textures
 	{
+		actor_player.png
 		background.png
 		door.png
+		table_with_legs.png
 		vial.png
 		vial_cap.png
 	}
