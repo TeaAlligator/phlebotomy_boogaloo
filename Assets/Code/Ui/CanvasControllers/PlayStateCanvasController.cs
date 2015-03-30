@@ -20,6 +20,7 @@ namespace Assets.Code.Ui.CanvasControllers
         private readonly GameObject _patientSpeechBubble;
         private readonly Text       _patientSpeechBubbleText;
         private readonly Button     _talkButton;
+		private readonly Button _drawButton;
         private readonly GameObject _tourniquetTable;
         private readonly GameObject _tourniquet;
 		private readonly GameObject _doctorsOrdersObject;
@@ -46,12 +47,18 @@ namespace Assets.Code.Ui.CanvasControllers
             _tourniquetTable = GetElement("TourniquetTable");
             _tourniquet = _tourniquetTable.transform.GetChild(0).gameObject;
 			_doctorsOrdersObject = GetElement("DocsOrders");
-
+			_drawButton = GetElement("NeedleWindow").transform.Find("layoutgroup").transform.GetChild(0).GetComponent<Button>();
+			_drawButton.onClick.AddListener(OnDrawButtonClicked);
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
 
             _onPatientTalk = _messager.Subscribe<PatientTalkMessage>(OnPatientTalk);
 			_newPatientToken = _messager.Subscribe<NewPatientMessage>(OnNewPatient);
         }
+
+		private void OnDrawButtonClicked()
+		{
+			_messager.Publish(new DrawButtonClickedMessage());
+		}
 
 		private void OnNewPatient(NewPatientMessage input)
 		{

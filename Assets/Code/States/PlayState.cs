@@ -52,6 +52,7 @@ namespace Assets.Code.States
         /* TOKENS */
         private MessagingToken _onTalkButtonClicked;
         private MessagingToken _onTourniquetOnPatient;
+		private MessagingToken _onDrawClicked;
 
         public PlayState(IoCResolver resolver) : base(resolver)
         {
@@ -65,24 +66,30 @@ namespace Assets.Code.States
             _currentStage = PlayStages.TalkStage;
             _tourniquetOnPatient = false;
 
-            _uiManager = new UiManager();
-            _uiManager.RegisterUi(new PlayStateCanvasController(_messager, _canvasProvider.GetCanvas("play_canvas")));
-
             _onTalkButtonClicked = _messager.Subscribe<TalkButtonClickedMessage>(OnTalkButtonClicked);
             _onTourniquetOnPatient = _messager.Subscribe<TourniquetOnPatientMessage>(OnTourniquetOnPatient);
+			_onDrawClicked = _messager.Subscribe<DrawButtonClickedMessage>(OnDrawClicked);
 
             _patientGenerator = new PatientGenerator();
 			_playCanvas = _canvasProvider.GetCanvas("play_canvas");
 			_playCanvas.gameObject.SetActive(true);
 			_tubeSlider = GameObject.Instantiate(_prefabProvider.GetPrefab("Vial"));
-			_tubeSlider.transform.SetParent(_playCanvas.transform);
-			_tubeSlider.transform.localScale = new Vector3(-2.5f, 6, 1);
-			_tubeSlider.transform.localPosition = new Vector3(723.24f, 118.9f, 0);
+			_tubeSlider.transform.SetParent(_playCanvas.transform.Find("NeedleWindow").transform);
+			_tubeSlider.transform.localScale = new Vector3(-2.5f, 5, 1);
+			_tubeSlider.transform.localPosition = new Vector3(0f, 0f, 0);;
+			_tubeSlider.transform.SetAsFirstSibling();
 			_tube = _tubeSlider.GetComponent<Tube>();
 			_tube.Initialize(TestType.Edta);
-			_tube.StartDraw();
-            NewPatient();
+			NewPatient();
+
+			_uiManager = new UiManager();
+			_uiManager.RegisterUi(new PlayStateCanvasController(_messager, _canvasProvider.GetCanvas("play_canvas")));
         }
+
+		public void OnDrawClicked(DrawButtonClickedMessage input)
+		{
+			_tube.StartDraw();
+		}
 
         public override void Update()
         {
@@ -140,7 +147,7 @@ namespace Assets.Code.States
 
         public override void TearDown()
         {
-			_messager.CancelSubscription(_onTalkButtonClicked);
+			_messager.CancelSubscription(_onTalkButtonClicked, _onDrawClicked, _onTourniquetOnPatient);
 
 			_uiManager.TearDown();
 
