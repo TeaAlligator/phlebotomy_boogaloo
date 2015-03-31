@@ -70,8 +70,6 @@ namespace Assets.Code.States
             _onTourniquetOnPatient = _messager.Subscribe<TourniquetOnPatientMessage>(OnTourniquetOnPatient);
 			_onDrawClicked = _messager.Subscribe<DrawButtonClickedMessage>(OnDrawClicked);
 
-			_messager.Publish(new SetupUiMessage());
-
             _patientGenerator = new PatientGenerator();
 			_playCanvas = _canvasProvider.GetCanvas("play_canvas");
 			_playCanvas.gameObject.SetActive(true);
