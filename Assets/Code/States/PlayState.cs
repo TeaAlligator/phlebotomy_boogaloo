@@ -7,6 +7,7 @@ using Assets.Code.Messaging.Messages;
 using Assets.Code.UI;
 using Assets.Code.Ui.CanvasControllers;
 using UnityEngine;
+﻿using UnityEngine.UI;
 
 namespace Assets.Code.States
 {
@@ -15,7 +16,8 @@ namespace Assets.Code.States
         NameMismatch = 0,
         IdMismatch,
         WrongTube,
-        NoPermission
+		NoPermission,
+		NoTourniquet
     }
 
     public enum PlayStages
@@ -29,6 +31,9 @@ namespace Assets.Code.States
 
     public class PlayState : BaseState
     {
+		public int Mistakes;
+		public int NotMistakes;
+
         /* PROPERTIES */
         private readonly Messager _messager;
         private readonly CanvasProvider _canvasProvider;
@@ -46,6 +51,9 @@ namespace Assets.Code.States
         private PlayStages _currentStage;
 
         private bool _tourniquetOnPatient;
+		private bool _patientPermission;
+
+		private TubeType _currentTubeType;
 
         /* REFERENCES */
 
@@ -63,7 +71,10 @@ namespace Assets.Code.States
 
         public override void Initialize()
 		{
-            _currentStage = PlayStages.TalkStage;
+			_uiManager = new UiManager();
+			_uiManager.RegisterUi(new PlayStateCanvasController(_messager, _canvasProvider.GetCanvas("play_canvas")));
+        
+			_currentStage = PlayStages.TalkStage;
             _tourniquetOnPatient = false;
 
             _onTalkButtonClicked = _messager.Subscribe<TalkButtonClickedMessage>(OnTalkButtonClicked);
@@ -80,14 +91,29 @@ namespace Assets.Code.States
 			_tubeSlider.transform.SetAsFirstSibling();
 			_tube = _tubeSlider.GetComponent<Tube>();
 			_tube.Initialize(TubeType.Edta);
+			_currentTubeType = TubeType.Edta;
 			NewPatient();
-
-			_uiManager = new UiManager();
-			_uiManager.RegisterUi(new PlayStateCanvasController(_messager, _canvasProvider.GetCanvas("play_canvas")));
         }
 
 		public void OnDrawClicked(DrawButtonClickedMessage input)
 		{
+			_tubeSlider.GetComponent<Slider>().value = 0;
+
+			if (_currentPatient.DoctorsOrders != _currentTubeType)
+				HandleMistake(MistakeType.WrongTube);
+			else if (_currentPatient.FirstName != _currentPatient.WristbandFirstName || _currentPatient.LastName != _currentPatient.WristbandLastName)
+				HandleMistake(MistakeType.NameMismatch);
+			else if (_currentPatient.Id != _currentPatient.WristbandId)
+				HandleMistake(MistakeType.IdMismatch);
+			else if (!_tourniquetOnPatient)
+				HandleMistake(MistakeType.NoTourniquet);
+			else if (!_patientPermission)
+				HandleMistake(MistakeType.NoPermission);
+			else
+				HandleNotMistake();
+
+			_patientPermission = false;
+
 			_tube.StartDraw();
 		}
 
@@ -129,7 +155,19 @@ namespace Assets.Code.States
                         newMessage.Text = "I'm " + _currentPatient.FirstName + " " + _currentPatient.LastName + ".";
                         break;
                     }
-                    newMessage.Text = "Sure, go ahead.";
+                    else
+                    {
+						if (!_currentPatient.Rebellious)
+						{
+							_patientPermission = true;
+							newMessage.Text = "Sure, go ahead.";
+						}
+						else
+						{
+							_patientPermission = false;
+							newMessage.Text = "NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOPE. NOPE NOPE NOPE. NOPE. NOPE.";
+						}
+                    }
                     break;
                 case PlayStages.DrawStage:
                     newMessage.Text = "...";
@@ -176,27 +214,44 @@ namespace Assets.Code.States
                 case MistakeType.NoPermission:
                     NoPermission();
                     break;
+				case MistakeType.NoTourniquet:
+					NoTourniquet();
+					break;
             }
         }
 
+		private void NoTourniquet()
+		{
+			Mistakes++;
+		}
+
         private void NameMismatch()
-        {
+		{
+			Mistakes++;
         }
 
         private void IdMismatch()
-        {
+		{
+			Mistakes++;
         }
 
         private void WrongTube()
-        {
+		{
+			Mistakes++;
         }
 
         private void NoPermission()
-        {
+		{
+			Mistakes++;
         }
 
 		private void SetupUI()
 		{
+		}
+
+		private void HandleNotMistake()
+		{
+			NotMistakes++;
 		}
     }
 }
