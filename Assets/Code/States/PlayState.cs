@@ -79,7 +79,7 @@ namespace Assets.Code.States
 			_tubeSlider.transform.localPosition = new Vector3(0f, 0f, 0);;
 			_tubeSlider.transform.SetAsFirstSibling();
 			_tube = _tubeSlider.GetComponent<Tube>();
-			_tube.Initialize(TestType.Edta);
+			_tube.Initialize(TubeType.Edta);
 			NewPatient();
 
 			_uiManager = new UiManager();

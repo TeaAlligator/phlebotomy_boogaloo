@@ -19,8 +19,9 @@ namespace Assets.Code.Ui.CanvasControllers
         private readonly GameObject _patient;
         private readonly GameObject _patientSpeechBubble;
         private readonly Text       _patientSpeechBubbleText;
-        private readonly Button     _talkButton;
+		private readonly Button _talkButton;
 		private readonly Button _drawButton;
+		private readonly GameObject _tubesSheet;
         private readonly GameObject _tourniquetTable;
         private readonly GameObject _tourniquet;
 		private readonly GameObject _doctorsOrdersObject;
@@ -50,10 +51,26 @@ namespace Assets.Code.Ui.CanvasControllers
 			_drawButton = GetElement("NeedleWindow").transform.Find("layoutgroup").transform.GetChild(0).GetComponent<Button>();
 			_drawButton.onClick.AddListener(OnDrawButtonClicked);
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
+			_tubesSheet = GetElement("TubesSheet");
+			_tubesSheet.GetComponent<Button>().onClick.AddListener(MakeSheetSmall);
 
             _onPatientTalk = _messager.Subscribe<PatientTalkMessage>(OnPatientTalk);
 			_newPatientToken = _messager.Subscribe<NewPatientMessage>(OnNewPatient);
         }
+
+		void MakeSheetBig()
+		{
+			_tubesSheet.transform.localScale = new Vector3(10, 10, 1);
+			_tubesSheet.GetComponent<Button>().onClick.RemoveAllListeners();
+			_tubesSheet.GetComponent<Button>().onClick.AddListener(MakeSheetSmall);
+		}
+
+		void MakeSheetSmall()
+		{
+			_tubesSheet.transform.localScale = new Vector3(1, 1, 1);
+			_tubesSheet.GetComponent<Button>().onClick.RemoveAllListeners();
+			_tubesSheet.GetComponent<Button>().onClick.AddListener(MakeSheetBig);
+		}
 
 		private void OnDrawButtonClicked()
 		{
@@ -64,7 +81,7 @@ namespace Assets.Code.Ui.CanvasControllers
 		{
 			_doctorsOrdersObject.transform.GetChild(0).GetComponent<Text>().text = "Name:\t" + input.NewPatient.WristbandFirstName + " " + input.NewPatient.WristbandLastName;
 			_doctorsOrdersObject.transform.GetChild(1).GetComponent<Text>().text = "ID:\t\t" + input.NewPatient.WristbandId;
-			_doctorsOrdersObject.transform.GetChild(2).GetComponent<Text>().text = "Test:\t\t" + input.NewPatient.DoctorsOrders.GetType();
+			_doctorsOrdersObject.transform.GetChild(2).GetComponent<Text>().text = "Test:\t\t" + input.NewPatient.DoctorsOrders;
 		}
 
         private void OnTalkButtonClicked()

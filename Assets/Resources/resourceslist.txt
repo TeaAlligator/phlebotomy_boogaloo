@@ -9,6 +9,7 @@
 		camo_vial_cap.png
 		door.png
 		table_with_legs.png
+		tubes.png
 		vial.png
 		vial_cap.png
 	}

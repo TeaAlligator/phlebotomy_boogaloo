@@ -6,18 +6,18 @@ using UnityEngine.UI;
 
 public class Tube : MonoBehaviour 
 {
-	public static readonly Dictionary<TestType, Color> VialCapColors = new Dictionary<TestType, Color>
+	public static readonly Dictionary<TubeType, Color> VialCapColors = new Dictionary<TubeType, Color>
 	{
-	    { TestType.BloodCultures, new Color((float)253 / (float)255, (float)247 / (float)255, (float)151 / (float)255) },
-	    { TestType.Citrate, new Color((float)112 / (float)255, (float)206 / (float)255, (float)231 / (float)255) },
-	    { TestType.GelSeparator, new Color((float)197 / (float)255, (float)41 / (float)255, (float)42 / (float)255) },
-	    { TestType.Serum, new Color((float)228 / (float)255, (float)25 / (float)255, (float)55 / (float)255) },
-	    { TestType.RapidSerum, new Color((float)234 / (float)255, (float)141 / (float)255, (float)71 / (float)255) },
-	    { TestType.HeparinGelSeparator, new Color((float)158 / (float)255, (float)200 / (float)255, (float)190 / (float)255) },
-	    { TestType.Heparin, new Color((float)1 / (float)255, (float)135 / (float)255, (float)84 / (float)255) },
-	    { TestType.Edta, new Color((float)233 / (float)255, (float)172 / (float)255, (float)206 / (float)255) },
-	    { TestType.EdtaWithGel, new Color((float)255 / (float)255, (float)255 / (float)255, (float)255 / (float)255) },
-	    { TestType.Glucose, new Color((float)184 / (float)255, (float)188 / (float)255, (float)191 / (float)255) }
+	    { TubeType.BloodCultures, new Color((float)253 / (float)255, (float)247 / (float)255, (float)151 / (float)255) },
+	    { TubeType.Citrate, new Color((float)112 / (float)255, (float)206 / (float)255, (float)231 / (float)255) },
+	    { TubeType.GelSeparator, new Color((float)197 / (float)255, (float)41 / (float)255, (float)42 / (float)255) },
+	    { TubeType.Serum, new Color((float)228 / (float)255, (float)25 / (float)255, (float)55 / (float)255) },
+	    { TubeType.RapidSerum, new Color((float)234 / (float)255, (float)141 / (float)255, (float)71 / (float)255) },
+	    { TubeType.HeparinGelSeparator, new Color((float)158 / (float)255, (float)200 / (float)255, (float)190 / (float)255) },
+	    { TubeType.Heparin, new Color((float)1 / (float)255, (float)135 / (float)255, (float)84 / (float)255) },
+	    { TubeType.Edta, new Color((float)233 / (float)255, (float)172 / (float)255, (float)206 / (float)255) },
+	    { TubeType.EdtaWithGel, new Color((float)255 / (float)255, (float)255 / (float)255, (float)255 / (float)255) },
+	    { TubeType.Glucose, new Color((float)184 / (float)255, (float)188 / (float)255, (float)191 / (float)255) }
 	};
 
 	public float FillTime;
@@ -32,7 +32,7 @@ public class Tube : MonoBehaviour
 	{
 	}
 
-	public void Initialize(TestType type)
+	public void Initialize(TubeType type)
 	{
 		TubeSlider = GetComponent<Slider>();
 		var lid = transform.FindChild("VialLid");

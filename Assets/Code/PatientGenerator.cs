@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 namespace Assets.Code
 {
-    public enum TestType
+    public enum TubeType
     {
         Standard = 0,
         BloodCultures,
@@ -31,16 +31,12 @@ namespace Assets.Code
         private const int RebeliousChance = 15;
         static readonly private List<string> LastNames = new List<string>
         {
-            "DaCunha",
-            "Laakes",
-            "Moni",
             "Bush",
             "Obama",
             "Roosavelt",
             "Bin Laden",
             "Washington",
             "Heussein",
-            "Blair",
             "Reagan",
             "McDonald",
 			"Hitler"
@@ -61,7 +57,12 @@ namespace Assets.Code
             "Tony",
             "Ronald",
             "Teddy",
-            "Ronald"
+            "Ronald",
+			"Emi",
+			"Emilian",
+			"Cam",
+			"Cameron",
+			"Cameroony"
         };
 
         public Patient GeneratePatient()
@@ -99,8 +100,8 @@ namespace Assets.Code
                 fab.Rebellious = true;
             }
 
-            int numPossibleTests = Enum.GetNames(typeof(TestType)).Count();
-            fab.DoctorsOrders = (TestType)Random.Range(0, numPossibleTests);
+            int numPossibleTests = Enum.GetNames(typeof(TubeType)).Count();
+            fab.DoctorsOrders = (TubeType)Random.Range(0, numPossibleTests);
 
             return fab;
         }
