@@ -61,6 +61,7 @@ namespace Assets.Code.States
         private MessagingToken _onTalkButtonClicked;
         private MessagingToken _onTourniquetOnPatient;
 		private MessagingToken _onDrawClicked;
+		private MessagingToken _newPatientToken;
 
         public PlayState(IoCResolver resolver) : base(resolver)
         {
@@ -80,6 +81,7 @@ namespace Assets.Code.States
             _onTalkButtonClicked = _messager.Subscribe<TalkButtonClickedMessage>(OnTalkButtonClicked);
             _onTourniquetOnPatient = _messager.Subscribe<TourniquetOnPatientMessage>(OnTourniquetOnPatient);
 			_onDrawClicked = _messager.Subscribe<DrawButtonClickedMessage>(OnDrawClicked);
+			_newPatientToken = _messager.Subscribe<NewPatientMessage>(OnNewPatient);
 
             _patientGenerator = new PatientGenerator();
 			_playCanvas = _canvasProvider.GetCanvas("play_canvas");
@@ -94,6 +96,15 @@ namespace Assets.Code.States
 			_currentTubeType = TubeType.Edta;
 			NewPatient();
         }
+		
+		private void OnNewPatient(NewPatientMessage input)
+		{
+			_tourniquetOnPatient = false;
+			_patientPermission = false;
+			_tubeSlider.GetComponent<Slider>().value = 0;
+			_currentPatient = input.NewPatient;
+			_tube.StopDraw();
+		}
 
 		public void OnDrawClicked(DrawButtonClickedMessage input)
 		{
@@ -111,6 +122,8 @@ namespace Assets.Code.States
 				HandleMistake(MistakeType.NoPermission);
 			else
 				HandleNotMistake();
+
+			_messager.Publish(new ScoreChangedMessage { NewMistakes = Mistakes, NewNotMistakes = NotMistakes });
 
 			_patientPermission = false;
 
@@ -185,7 +198,7 @@ namespace Assets.Code.States
 
         public override void TearDown()
         {
-			_messager.CancelSubscription(_onTalkButtonClicked, _onDrawClicked, _onTourniquetOnPatient);
+			_messager.CancelSubscription(_onTalkButtonClicked, _onDrawClicked, _onTourniquetOnPatient, _newPatientToken);
 
 			_uiManager.TearDown();
 

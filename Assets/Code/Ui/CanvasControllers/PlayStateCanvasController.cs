@@ -3,6 +3,7 @@ using Assets.Code.Messaging;
 using Assets.Code.Messaging.Messages;
 using Assets.Code.States;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 namespace Assets.Code.Ui.CanvasControllers
@@ -16,6 +17,8 @@ namespace Assets.Code.Ui.CanvasControllers
         /* REFERENCES */
         private readonly Messager _messager;
 
+		private static PatientGenerator _patientGenerator = new PatientGenerator();
+
         private readonly GameObject _patient;
         private readonly GameObject _patientSpeechBubble;
         private readonly Text       _patientSpeechBubbleText;
@@ -25,10 +28,12 @@ namespace Assets.Code.Ui.CanvasControllers
         private readonly GameObject _tourniquetTable;
         private readonly GameObject _tourniquet;
 		private readonly GameObject _doctorsOrdersObject;
+		private readonly Text _scoreText;
 
         /* TOKENS */
         private readonly MessagingToken _onPatientTalk;
 		private readonly MessagingToken _newPatientToken;
+		private readonly MessagingToken _scoreChangedToken;
 
 
         public PlayStateCanvasController(Messager messager, Canvas canvasView)
@@ -53,10 +58,18 @@ namespace Assets.Code.Ui.CanvasControllers
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
 			_tubesSheet = GetElement("TubesSheet");
 			_tubesSheet.GetComponent<Button>().onClick.AddListener(MakeSheetSmall);
+			_scoreText = GetElement<Text>("ScoreText");
+			GetElement<Button>("NewPatientButton").onClick.AddListener(NewPatient);
 
             _onPatientTalk = _messager.Subscribe<PatientTalkMessage>(OnPatientTalk);
 			_newPatientToken = _messager.Subscribe<NewPatientMessage>(OnNewPatient);
+			_scoreChangedToken = _messager.Subscribe<ScoreChangedMessage>(OnScoreChanged);
         }
+
+		void OnScoreChanged(ScoreChangedMessage input)
+		{
+			_scoreText.text = "Mistakes:\t\t\t" + input.NewMistakes + "\nNot-Mistakes:\t" + input.NewNotMistakes;
+		}
 
 		void MakeSheetBig()
 		{
@@ -70,6 +83,11 @@ namespace Assets.Code.Ui.CanvasControllers
 			_tubesSheet.transform.localScale = new Vector3(1, 1, 1);
 			_tubesSheet.GetComponent<Button>().onClick.RemoveAllListeners();
 			_tubesSheet.GetComponent<Button>().onClick.AddListener(MakeSheetBig);
+		}
+
+		void NewPatient()
+		{
+			_messager.Publish(new NewPatientMessage { NewPatient = _patientGenerator.GeneratePatient() });
 		}
 
 		private void OnDrawButtonClicked()
@@ -113,7 +131,7 @@ namespace Assets.Code.Ui.CanvasControllers
         public new void TearDown()
         {
             _messager.CancelSubscription(_onPatientTalk);
-			_messager.CancelSubscription(_newPatientToken);
+			_messager.CancelSubscription(_newPatientToken, _scoreChangedToken);
 
             base.TearDown();
         }

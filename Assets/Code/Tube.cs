@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Assets.Code;
+using Assets.Code.Messaging;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
@@ -60,6 +62,12 @@ public class Tube : MonoBehaviour
 		_endTime = _currentTime + 5; // tube fill time
 		TubeSlider.maxValue = FillTime;
 		_filling = true;
+	}
+	
+	public void StopDraw()
+	{
+		_filling = false;
+		TubeSlider.value = 0;
 	}
 
 	void OnAwake()
