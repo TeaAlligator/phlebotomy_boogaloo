@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Code.Ui
 {
-    public class PatientDropbox : MonoBehaviour, IDropHandler
+    public class NeedleDropbox : MonoBehaviour, IDropHandler
     {
         private Messager _messager;
 
@@ -34,14 +34,19 @@ namespace Assets.Code.Ui
         public void OnDrop(PointerEventData eventData)
         {
             var obj = _dragParentLimbo.GetChild(0);
-            if (!obj || obj.name != "Tourniquet")
+            if (!obj || obj.tag != "Tube")
                 return;
 
-            if (transform.childCount < 1)
+            if (transform.childCount < 2)
             {
                 obj.transform.SetParent(transform);
-                obj.transform.localPosition = Vector3.zero;
-                _messager.Publish(new TourniquetOnPatientMessage());
+                obj.transform.localPosition = new Vector3(10, -10, 0);
+                obj.transform.Rotate(new Vector3(0, 0, 90));
+                obj.transform.localScale = new Vector3(2.5f, 0.8f, 1);
+                _messager.Publish(new VialAddedToNeedleMessage
+                {
+                    Vial = obj.gameObject
+                });
             }
         }
     }

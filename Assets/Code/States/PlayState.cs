@@ -60,6 +60,7 @@ namespace Assets.Code.States
         /* TOKENS */
         private MessagingToken _onTalkButtonClicked;
         private MessagingToken _onTourniquetOnPatient;
+        private MessagingToken _onVialAddedToNeedle;
 		private MessagingToken _onDrawClicked;
 		private MessagingToken _newPatientToken;
 
@@ -82,32 +83,39 @@ namespace Assets.Code.States
             _onTourniquetOnPatient = _messager.Subscribe<TourniquetOnPatientMessage>(OnTourniquetOnPatient);
 			_onDrawClicked = _messager.Subscribe<DrawButtonClickedMessage>(OnDrawClicked);
 			_newPatientToken = _messager.Subscribe<NewPatientMessage>(OnNewPatient);
+            _onVialAddedToNeedle = _messager.Subscribe<VialAddedToNeedleMessage>(OnVialAddedToNeedle);
 
             _patientGenerator = new PatientGenerator();
 			_playCanvas = _canvasProvider.GetCanvas("play_canvas");
 			_playCanvas.gameObject.SetActive(true);
-			_tubeSlider = GameObject.Instantiate(_prefabProvider.GetPrefab("Vial"));
-			_tubeSlider.transform.SetParent(_playCanvas.transform.Find("NeedleWindow").transform);
-			_tubeSlider.transform.localScale = new Vector3(-2.5f, 5, 1);
-			_tubeSlider.transform.localPosition = new Vector3(0f, 0f, 0);;
-			_tubeSlider.transform.SetAsFirstSibling();
-			_tube = _tubeSlider.GetComponent<Tube>();
-			_tube.Initialize(TubeType.Edta);
 			_currentTubeType = TubeType.Edta;
 			NewPatient();
         }
-		
+
+        private void OnVialAddedToNeedle(VialAddedToNeedleMessage message)
+        {
+            _tubeSlider = message.Vial;
+            _tube = _tubeSlider.GetComponent<Tube>();
+            _tube.Initialize((TubeType)Enum.Parse(typeof(TubeType), message.Vial.name));
+        }
+
 		private void OnNewPatient(NewPatientMessage input)
 		{
 			_tourniquetOnPatient = false;
 			_patientPermission = false;
-			_tubeSlider.GetComponent<Slider>().value = 0;
-			_currentPatient = input.NewPatient;
-			_tube.StopDraw();
+		    if (_tubeSlider)
+		    {
+		        _tubeSlider.GetComponent<Slider>().value = 0;
+                _tube.StopDraw();
+		    }
+		    _currentPatient = input.NewPatient;
 		}
 
 		public void OnDrawClicked(DrawButtonClickedMessage input)
 		{
+		    if (!_tubeSlider)
+		        return;
+
 			_tubeSlider.GetComponent<Slider>().value = 0;
 
 			if (_currentPatient.DoctorsOrders != _currentTubeType)

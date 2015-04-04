@@ -37,7 +37,7 @@ public class Tube : MonoBehaviour
 	public void Initialize(TubeType type)
 	{
 		TubeSlider = GetComponent<Slider>();
-		var lid = transform.FindChild("VialLid");
+		var lid = transform.FindChild("Lid");
 		var lidImage = lid.GetComponent<Image>();
 		var lidColor = VialCapColors[type];
 		lidImage.color = new Color(lidColor.r, lidColor.g, lidColor.b);

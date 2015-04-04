@@ -53,7 +53,9 @@ namespace Assets.Code.Ui.CanvasControllers
             _tourniquetTable = GetElement("TourniquetTable");
             _tourniquet = _tourniquetTable.transform.GetChild(0).gameObject;
 			_doctorsOrdersObject = GetElement("DocsOrders");
-			_drawButton = GetElement("NeedleWindow").transform.Find("layoutgroup").transform.GetChild(0).GetComponent<Button>();
+            var needleWindow = GetElement("NeedleWindow");
+            needleWindow.GetComponent<NeedleDropbox>().Initialize(_messager);
+			_drawButton = needleWindow.transform.FindChild("Button").GetComponent<Button>();
 			_drawButton.onClick.AddListener(OnDrawButtonClicked);
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
 			_tubesSheet = GetElement("TubesSheet");
