@@ -56,18 +56,21 @@ public class Tube : MonoBehaviour
 		}
 	}
 
-	public void StartDraw()
-	{
-		_currentTime = Time.timeSinceLevelLoad;
-		_endTime = _currentTime + 5; // tube fill time
-		TubeSlider.maxValue = FillTime;
-		_filling = true;
+    public void StartDraw()
+    {
+        //if (TubeSlider.value == 0)
+        {
+            _currentTime = Time.timeSinceLevelLoad;
+            _endTime = _currentTime + 5; // tube fill time
+            TubeSlider.maxValue = FillTime;
+        }
+        
+        _filling = true;
 	}
 	
 	public void StopDraw()
 	{
 		_filling = false;
-		TubeSlider.value = 0;
 	}
 
 	void OnAwake()

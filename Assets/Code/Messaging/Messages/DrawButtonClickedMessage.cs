@@ -1,5 +1,8 @@
 ﻿
-namespace Assets.Code.Messaging.Messages
+namespace Assets.Code.Messaging.Messages  
 {
-	public class DrawButtonClickedMessage : IMessage { }
+    public class DrawButtonClickedMessage : IMessage
+    {
+        public bool Value;
+    }
 }

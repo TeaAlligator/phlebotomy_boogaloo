@@ -10,19 +10,24 @@ namespace Assets.Code.Ui
     public class DragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         private Transform _dragParentLimbo;
+        private Transform _playCanvas;
 
         void Start()
         {
             _dragParentLimbo = GameObject.Find("DragParentLimbo").transform;
-            SortChildrenByName(transform.parent);
+            _playCanvas = GameObject.Find("play_canvas").transform;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            var duplicate = Instantiate(gameObject);
-            duplicate.transform.SetParent(transform.parent);
-            duplicate.transform.localScale = transform.localScale;
-            duplicate.name = gameObject.name;
+            if (transform.parent != _playCanvas)
+            {
+                var duplicate = Instantiate(gameObject);
+                duplicate.transform.SetParent(transform.parent);
+                duplicate.transform.localScale = transform.localScale;
+                duplicate.name = gameObject.name;
+                SortChildrenByName(transform.parent);
+            }
 
             transform.SetParent(_dragParentLimbo);
             GetComponent<CanvasGroup>().blocksRaycasts = false;
@@ -36,7 +41,10 @@ namespace Assets.Code.Ui
         public void OnEndDrag(PointerEventData eventData)
         {
             if (transform.parent == _dragParentLimbo)
-                Destroy(gameObject);
+            {
+                GetComponent<CanvasGroup>().blocksRaycasts = true;
+                transform.SetParent(_playCanvas);
+            }
         }
 
         public static void SortChildrenByName(Transform parent)

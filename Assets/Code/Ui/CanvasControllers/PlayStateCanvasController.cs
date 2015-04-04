@@ -23,7 +23,7 @@ namespace Assets.Code.Ui.CanvasControllers
         private readonly GameObject _patientSpeechBubble;
         private readonly Text       _patientSpeechBubbleText;
 		private readonly Button _talkButton;
-		private readonly Button _drawButton;
+		private readonly Toggle _drawButton;
 		private readonly GameObject _tubesSheet;
         private readonly GameObject _tourniquetTable;
         private readonly GameObject _tourniquet;
@@ -55,13 +55,14 @@ namespace Assets.Code.Ui.CanvasControllers
 			_doctorsOrdersObject = GetElement("DocsOrders");
             var needleWindow = GetElement("NeedleWindow");
             needleWindow.GetComponent<NeedleDropbox>().Initialize(_messager);
-			_drawButton = needleWindow.transform.FindChild("Button").GetComponent<Button>();
-			_drawButton.onClick.AddListener(OnDrawButtonClicked);
+			_drawButton = needleWindow.transform.FindChild("Background").FindChild("Button").GetComponent<Toggle>();
+			_drawButton.onValueChanged.AddListener(OnDrawButtonClicked);
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
 			_tubesSheet = GetElement("TubesSheet");
 			_tubesSheet.GetComponent<Button>().onClick.AddListener(MakeSheetSmall);
 			_scoreText = GetElement<Text>("ScoreText");
 			GetElement<Button>("NewPatientButton").onClick.AddListener(NewPatient);
+            GetElement("Sharps").GetComponent<SharpsDropbox>().Initialize(_messager);
 
             _onPatientTalk = _messager.Subscribe<PatientTalkMessage>(OnPatientTalk);
 			_newPatientToken = _messager.Subscribe<NewPatientMessage>(OnNewPatient);
@@ -92,9 +93,12 @@ namespace Assets.Code.Ui.CanvasControllers
 			_messager.Publish(new NewPatientMessage { NewPatient = _patientGenerator.GeneratePatient() });
 		}
 
-		private void OnDrawButtonClicked()
+		private void OnDrawButtonClicked(bool value)
 		{
-			_messager.Publish(new DrawButtonClickedMessage());
+            _messager.Publish(new DrawButtonClickedMessage
+            {
+                Value = value
+            });
 		}
 
 		private void OnNewPatient(NewPatientMessage input)

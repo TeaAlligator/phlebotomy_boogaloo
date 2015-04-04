@@ -116,26 +116,32 @@ namespace Assets.Code.States
 		    if (!_tubeSlider)
 		        return;
 
-			_tubeSlider.GetComponent<Slider>().value = 0;
+		    if (input.Value)
+		    {
+		        _tubeSlider.GetComponent<Slider>().value = 0;
 
-			if (_currentPatient.DoctorsOrders != _currentTubeType)
-				HandleMistake(MistakeType.WrongTube);
-			else if (_currentPatient.FirstName != _currentPatient.WristbandFirstName || _currentPatient.LastName != _currentPatient.WristbandLastName)
-				HandleMistake(MistakeType.NameMismatch);
-			else if (_currentPatient.Id != _currentPatient.WristbandId)
-				HandleMistake(MistakeType.IdMismatch);
-			else if (!_tourniquetOnPatient)
-				HandleMistake(MistakeType.NoTourniquet);
-			else if (!_patientPermission)
-				HandleMistake(MistakeType.NoPermission);
-			else
-				HandleNotMistake();
+		        if (_currentPatient.DoctorsOrders != _currentTubeType)
+		            HandleMistake(MistakeType.WrongTube);
+		        else if (_currentPatient.FirstName != _currentPatient.WristbandFirstName ||
+		                 _currentPatient.LastName != _currentPatient.WristbandLastName)
+		            HandleMistake(MistakeType.NameMismatch);
+		        else if (_currentPatient.Id != _currentPatient.WristbandId)
+		            HandleMistake(MistakeType.IdMismatch);
+		        else if (!_tourniquetOnPatient)
+		            HandleMistake(MistakeType.NoTourniquet);
+		        else if (!_patientPermission)
+		            HandleMistake(MistakeType.NoPermission);
+		        else
+		            HandleNotMistake();
 
-			_messager.Publish(new ScoreChangedMessage { NewMistakes = Mistakes, NewNotMistakes = NotMistakes });
+		        _messager.Publish(new ScoreChangedMessage {NewMistakes = Mistakes, NewNotMistakes = NotMistakes});
 
-			_patientPermission = false;
+		        _patientPermission = false;
 
-			_tube.StartDraw();
+		        _tube.StartDraw();
+		    }
+            else
+		        _tube.StopDraw();
 		}
 
         public override void Update()
