@@ -8,12 +8,13 @@ namespace Assets.Code.Ui
     public class NeedleDropbox : MonoBehaviour, IDropHandler
     {
         private Messager _messager;
-
+        private bool _hasVial;
         private Transform _dragParentLimbo;
 
         void Start()
         {
             _dragParentLimbo = GameObject.Find("DragParentLimbo").transform;
+            _hasVial = false;
         }
 
         public GameObject FirstItem
@@ -31,13 +32,18 @@ namespace Assets.Code.Ui
             _messager = messager;
         }
 
+        public void ToggleHasVial()
+        {
+            _hasVial = !_hasVial;
+        }
+
         public void OnDrop(PointerEventData eventData)
         {
             var obj = _dragParentLimbo.GetChild(0);
             if (!obj || obj.tag != "Tube")
                 return;
 
-            if (transform.childCount < 2)
+            if (!_hasVial)
             {
                 obj.transform.SetParent(transform);
                 obj.transform.localPosition = new Vector3(10, -10, 0);
@@ -47,6 +53,8 @@ namespace Assets.Code.Ui
                 {
                     Vial = obj.gameObject
                 });
+
+                _hasVial = true;
             }
         }
     }

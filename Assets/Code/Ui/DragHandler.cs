@@ -20,13 +20,18 @@ namespace Assets.Code.Ui
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (transform.parent != _playCanvas)
+            if (transform.parent.parent.name == "TestTubeTable")
             {
                 var duplicate = Instantiate(gameObject);
                 duplicate.transform.SetParent(transform.parent);
                 duplicate.transform.localScale = transform.localScale;
                 duplicate.name = gameObject.name;
                 SortChildrenByName(transform.parent);
+            }
+            else if (transform.parent.name == "NeedleWindow")
+            {
+                transform.parent.GetComponent<NeedleDropbox>().ToggleHasVial();
+
             }
 
             transform.SetParent(_dragParentLimbo);
@@ -40,9 +45,9 @@ namespace Assets.Code.Ui
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            GetComponent<CanvasGroup>().blocksRaycasts = true;
             if (transform.parent == _dragParentLimbo)
             {
-                GetComponent<CanvasGroup>().blocksRaycasts = true;
                 transform.SetParent(_playCanvas);
             }
         }
