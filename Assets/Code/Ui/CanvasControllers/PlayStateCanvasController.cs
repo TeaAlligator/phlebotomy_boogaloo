@@ -23,7 +23,8 @@ namespace Assets.Code.Ui.CanvasControllers
         private readonly GameObject _patientSpeechBubble;
         private readonly Text       _patientSpeechBubbleText;
 		private readonly Button _talkButton;
-		private readonly Toggle _drawButton;
+        private readonly GameObject _drawButtonObject;
+		private readonly Toggle _drawToggle;
 		private readonly GameObject _tubesSheet;
         private readonly GameObject _tourniquetTable;
         private readonly GameObject _tourniquet;
@@ -34,6 +35,7 @@ namespace Assets.Code.Ui.CanvasControllers
         private readonly MessagingToken _onPatientTalk;
 		private readonly MessagingToken _newPatientToken;
 		private readonly MessagingToken _scoreChangedToken;
+        private readonly MessagingToken _onVialAddedToNeedle;
 
 
         public PlayStateCanvasController(Messager messager, Canvas canvasView)
@@ -55,18 +57,26 @@ namespace Assets.Code.Ui.CanvasControllers
 			_doctorsOrdersObject = GetElement("DocsOrders");
             var needleWindow = GetElement("NeedleWindow");
             needleWindow.GetComponent<NeedleDropbox>().Initialize(_messager);
-			_drawButton = needleWindow.transform.FindChild("Background").FindChild("Button").GetComponent<Toggle>();
-			_drawButton.onValueChanged.AddListener(OnDrawButtonClicked);
+            _drawButtonObject = needleWindow.transform.FindChild("Background").gameObject;
+			_drawToggle = _drawButtonObject.transform.FindChild("Button").GetComponent<Toggle>();
+			_drawToggle.onValueChanged.AddListener(OnDrawButtonClicked);
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
 			_tubesSheet = GetElement("TubesSheet");
 			_tubesSheet.GetComponent<Button>().onClick.AddListener(MakeSheetSmall);
 			_scoreText = GetElement<Text>("ScoreText");
 			GetElement<Button>("NewPatientButton").onClick.AddListener(NewPatient);
             GetElement("Sharps").GetComponent<SharpsDropbox>().Initialize(_messager);
+            _drawButtonObject.SetActive(false);
 
             _onPatientTalk = _messager.Subscribe<PatientTalkMessage>(OnPatientTalk);
 			_newPatientToken = _messager.Subscribe<NewPatientMessage>(OnNewPatient);
 			_scoreChangedToken = _messager.Subscribe<ScoreChangedMessage>(OnScoreChanged);
+            _onVialAddedToNeedle = messager.Subscribe<VialAddedToNeedleMessage>(OnVialAddedToNeedle);
+        }
+
+        void OnVialAddedToNeedle(VialAddedToNeedleMessage message)
+        {
+            _drawButtonObject.SetActive(true);
         }
 
 		void OnScoreChanged(ScoreChangedMessage input)

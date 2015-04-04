@@ -7,7 +7,10 @@
 		actor_player.png
 		background.png
 		camo_vial_cap.png
+		dinner_table.png
 		door.png
+		paper.png
+		sharps_container.png
 		table_with_legs.png
 		tubes.png
 		vial.png
