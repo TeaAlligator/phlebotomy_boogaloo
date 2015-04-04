@@ -19,24 +19,24 @@ namespace Assets.Code.Ui
 
         public void OnDrop(PointerEventData eventData)
         {
-            var obj = DragHandler.ItemBeingDragged;
-            if (!obj)
-                return;
+            //var obj = DragHandler.ItemBeingDragged;
+            //if (!obj)
+            //    return;
 
-            if (transform.childCount < NumberOfObjects)
-            {
-                obj.transform.SetParent(transform);
-                obj.transform.localPosition = Vector3.zero;
-            }
-            else
-            {
-                var child = FirstItem;
-                child.transform.position = obj.GetComponent<DragHandler>().StartPosition;
-                child.transform.SetParent(obj.GetComponent<DragHandler>().StartParent);
+            //if (transform.childCount < NumberOfObjects)
+            //{
+            //    obj.transform.SetParent(transform);
+            //    obj.transform.localPosition = Vector3.zero;
+            //}
+            //else
+            //{
+            //    var child = FirstItem;
+            //    child.transform.position = obj.GetComponent<DragHandler>().StartPosition;
+            //    child.transform.SetParent(obj.GetComponent<DragHandler>().StartParent);
             
-                obj.transform.SetParent(transform);
-                obj.transform.localPosition = Vector3.zero;
-            }
+            //    obj.transform.SetParent(transform);
+            //    obj.transform.localPosition = Vector3.zero;
+            //}
         }
     }
 }

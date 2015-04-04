@@ -26,16 +26,16 @@ namespace Assets.Code.Ui
 
         public void OnDrop(PointerEventData eventData)
         {
-            var obj = DragHandler.ItemBeingDragged;
-            if (!obj || obj.name != "Tourniquet")
-                return;
+            //var obj = DragHandler.ItemBeingDragged;
+            //if (!obj || obj.name != "Tourniquet")
+            //    return;
 
-            if (transform.childCount < 1)
-            {
-                obj.transform.SetParent(transform);
-                obj.transform.localPosition = Vector3.zero;
-                _messager.Publish(new TourniquetOnPatientMessage());
-            }
+            //if (transform.childCount < 1)
+            //{
+            //    obj.transform.SetParent(transform);
+            //    obj.transform.localPosition = Vector3.zero;
+            //    _messager.Publish(new TourniquetOnPatientMessage());
+            //}
         }
     }
 }
