@@ -118,7 +118,7 @@ namespace Assets.Code.States
 
 		    if (input.Value)
 		    {
-		        _tubeSlider.GetComponent<Slider>().value = 0;
+		        //_tubeSlider.GetComponent<Slider>().value = 0;
 
 		        if (_currentPatient.DoctorsOrders != _currentTubeType)
 		            HandleMistake(MistakeType.WrongTube);
@@ -161,7 +161,7 @@ namespace Assets.Code.States
 			}
 			if (Input.GetKeyDown(KeyCode.Q))
 			{
-				NewPatient();
+				_tube.StopDraw();
 			}
         }
 

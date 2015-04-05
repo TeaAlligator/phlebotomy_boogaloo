@@ -6,7 +6,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-public class Tube : MonoBehaviour 
+public class Tube : MonoBehaviour
 {
 	public static readonly Dictionary<TubeType, Color> VialCapColors = new Dictionary<TubeType, Color>
 	{
@@ -30,21 +30,22 @@ public class Tube : MonoBehaviour
 	private float _currentTime = 0;
 
 	// Use this for initialization
-	void Start ()
+	void Start()
 	{
 	}
 
 	public void Initialize(TubeType type)
 	{
 		TubeSlider = GetComponent<Slider>();
+		TubeSlider.value = 0;
 		var lid = transform.FindChild("Lid");
 		var lidImage = lid.GetComponent<Image>();
 		var lidColor = VialCapColors[type];
 		lidImage.color = new Color(lidColor.r, lidColor.g, lidColor.b);
 	}
-	
+
 	// Update is called once per frame
-	void Update () 
+	void Update()
 	{
 		if (_filling)
 		{
@@ -56,18 +57,15 @@ public class Tube : MonoBehaviour
 		}
 	}
 
-    public void StartDraw()
-    {
-        //if (TubeSlider.value == 0)
-        {
-            _currentTime = Time.timeSinceLevelLoad;
-            _endTime = _currentTime + 5; // tube fill time
-            TubeSlider.maxValue = FillTime;
-        }
-        
-        _filling = true;
+	public void StartDraw()
+	{
+		_currentTime = Time.timeSinceLevelLoad;
+		_endTime = _currentTime + (5f - TubeSlider.value); // tube fill time
+		TubeSlider.maxValue = FillTime;
+
+		_filling = true;
 	}
-	
+
 	public void StopDraw()
 	{
 		_filling = false;
