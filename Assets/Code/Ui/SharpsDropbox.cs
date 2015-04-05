@@ -33,6 +33,9 @@ namespace Assets.Code.Ui
 
         public void OnDrop(PointerEventData eventData)
         {
+            if (_dragParentLimbo.childCount == 0)
+                return;
+
             var obj = _dragParentLimbo.GetChild(0);
             if (!obj)
                 return;

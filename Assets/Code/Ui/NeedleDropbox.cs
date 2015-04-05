@@ -39,8 +39,11 @@ namespace Assets.Code.Ui
 
         public void OnDrop(PointerEventData eventData)
         {
+            if (_dragParentLimbo.childCount == 0)
+                return;
+
             var obj = _dragParentLimbo.GetChild(0);
-            if (!obj || obj.tag != "Tube")
+            if (obj.tag != "Tube")
                 return;
 
             if (!_hasVial)
