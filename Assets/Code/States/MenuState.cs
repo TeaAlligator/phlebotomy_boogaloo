@@ -20,14 +20,12 @@ namespace Assets.Code.States
 		private Messager _messager;
 
         private CanvasProvider _canvasProvider;
-		private PrefabProvider _prefabProvider;
 
 		private MessagingToken _stateChangedToken;
 
         public MenuState(IoCResolver resolver) : base(resolver)
         {
 			_uiManager = new UiManager();
-			_prefabProvider = resolver.Resolve<PrefabProvider>();
             _canvasProvider = resolver.Resolve<CanvasProvider>();
 			_messager = resolver.Resolve<Messager>();
 			_stateChangedToken = _messager.Subscribe<StateChangedMessage>(OnStateChange);

@@ -30,12 +30,14 @@ namespace Assets.Code.Ui.CanvasControllers
         private readonly GameObject _tourniquet;
 		private readonly GameObject _doctorsOrdersObject;
 		private readonly Text _scoreText;
+        private readonly GameObject _needleWindow;
 
         /* TOKENS */
         private readonly MessagingToken _onPatientTalk;
 		private readonly MessagingToken _newPatientToken;
 		private readonly MessagingToken _scoreChangedToken;
         private readonly MessagingToken _onVialAddedToNeedle;
+        private readonly MessagingToken _onVialRemovedFromNeedle;
 
 
         public PlayStateCanvasController(Messager messager, Canvas canvasView)
@@ -53,7 +55,7 @@ namespace Assets.Code.Ui.CanvasControllers
             _patientSpeechBubble.SetActive(false);
             _talkButton = GetElement<Button>("TalkButton");
             _tourniquetTable = GetElement("TourniquetTable");
-            _tourniquet = _tourniquetTable.transform.GetChild(0).gameObject;
+            _tourniquet = _tourniquetTable.transform.FindChild("Layout").FindChild("Tourniquet").gameObject;
 			_doctorsOrdersObject = GetElement("DocsOrders");
             var needleWindow = GetElement("NeedleWindow");
             needleWindow.GetComponent<NeedleDropbox>().Initialize(_messager);
@@ -62,21 +64,29 @@ namespace Assets.Code.Ui.CanvasControllers
 			_drawToggle.onValueChanged.AddListener(OnDrawButtonClicked);
             _talkButton.onClick.AddListener(OnTalkButtonClicked);
 			_tubesSheet = GetElement("TubesSheet");
-			_tubesSheet.GetComponent<Button>().onClick.AddListener(MakeSheetSmall);
-			_scoreText = GetElement<Text>("ScoreText");
+			_tubesSheet.GetComponent<Button>().onClick.AddListener(MakeSheetBig);
+            _tubesSheet.transform.localScale = new Vector3(1, 1, 1);
+            _scoreText = GetElement<Text>("ScoreText");
 			GetElement<Button>("NewPatientButton").onClick.AddListener(NewPatient);
             GetElement("Sharps").GetComponent<SharpsDropbox>().Initialize(_messager);
             _drawButtonObject.SetActive(false);
+            _needleWindow = GetElement("NeedleWindow");
 
             _onPatientTalk = _messager.Subscribe<PatientTalkMessage>(OnPatientTalk);
 			_newPatientToken = _messager.Subscribe<NewPatientMessage>(OnNewPatient);
 			_scoreChangedToken = _messager.Subscribe<ScoreChangedMessage>(OnScoreChanged);
             _onVialAddedToNeedle = messager.Subscribe<VialAddedToNeedleMessage>(OnVialAddedToNeedle);
+            _onVialRemovedFromNeedle = messager.Subscribe<VialRemovedFromNeedleMessage>(OnVialRemovedFromNeedleMessage);
         }
 
         void OnVialAddedToNeedle(VialAddedToNeedleMessage message)
         {
             _drawButtonObject.SetActive(true);
+        }
+
+        void OnVialRemovedFromNeedleMessage(VialRemovedFromNeedleMessage message)
+        {
+            _drawButtonObject.SetActive(false);
         }
 
 		void OnScoreChanged(ScoreChangedMessage input)
@@ -100,7 +110,7 @@ namespace Assets.Code.Ui.CanvasControllers
 
 		void NewPatient()
 		{
-			_messager.Publish(new NewPatientMessage { NewPatient = _patientGenerator.GeneratePatient() });
+            _messager.Publish(new NewPatientMessage { NewPatient = _patientGenerator.GeneratePatient() });
 		}
 
 		private void OnDrawButtonClicked(bool value)
@@ -113,7 +123,14 @@ namespace Assets.Code.Ui.CanvasControllers
 
 		private void OnNewPatient(NewPatientMessage input)
 		{
-			_doctorsOrdersObject.transform.GetChild(0).GetComponent<Text>().text = "Name:\t" + input.NewPatient.WristbandFirstName + " " + input.NewPatient.WristbandLastName;
+		    if (_needleWindow.transform.childCount == 2)
+		    {
+		        Object.Destroy(_needleWindow.transform.GetChild(1).gameObject);
+                _needleWindow.GetComponent<NeedleDropbox>().ToggleHasVial();
+		        _drawToggle.isOn = false;
+		    }
+		    _tourniquet.transform.SetParent(_tourniquetTable.transform.FindChild("Layout"));
+            _doctorsOrdersObject.transform.GetChild(0).GetComponent<Text>().text = "Name:\t" + input.NewPatient.WristbandFirstName + " " + input.NewPatient.WristbandLastName;
 			_doctorsOrdersObject.transform.GetChild(1).GetComponent<Text>().text = "ID:\t\t" + input.NewPatient.WristbandId;
 			_doctorsOrdersObject.transform.GetChild(2).GetComponent<Text>().text = "Test:\t\t" + input.NewPatient.DoctorsOrders;
 		}
@@ -147,7 +164,7 @@ namespace Assets.Code.Ui.CanvasControllers
         public new void TearDown()
         {
             _messager.CancelSubscription(_onPatientTalk);
-			_messager.CancelSubscription(_newPatientToken, _scoreChangedToken);
+            _messager.CancelSubscription(_newPatientToken, _scoreChangedToken, _onVialAddedToNeedle, _onVialRemovedFromNeedle);
 
             base.TearDown();
         }

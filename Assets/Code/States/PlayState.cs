@@ -37,7 +37,6 @@ namespace Assets.Code.States
         /* PROPERTIES */
         private readonly Messager _messager;
         private readonly CanvasProvider _canvasProvider;
-		private readonly PrefabProvider _prefabProvider;
         private UiManager _uiManager;
 
         private static PatientGenerator _patientGenerator = new PatientGenerator();
@@ -68,7 +67,6 @@ namespace Assets.Code.States
         {
             _resolver.Resolve(out _messager);
             _resolver.Resolve(out _canvasProvider);
-            _resolver.Resolve(out _prefabProvider);
         }
 
         public override void Initialize()
@@ -97,17 +95,13 @@ namespace Assets.Code.States
             _tubeSlider = message.Vial;
             _tube = _tubeSlider.GetComponent<Tube>();
             _tube.Initialize((TubeType)Enum.Parse(typeof(TubeType), message.Vial.name));
+            _currentTubeType = (TubeType) Enum.Parse(typeof (TubeType), message.Vial.name);
         }
 
 		private void OnNewPatient(NewPatientMessage input)
 		{
 			_tourniquetOnPatient = false;
 			_patientPermission = false;
-		    if (_tubeSlider)
-		    {
-		        _tubeSlider.GetComponent<Slider>().value = 0;
-                _tube.StopDraw();
-		    }
 		    _currentPatient = input.NewPatient;
 		}
 
@@ -125,8 +119,6 @@ namespace Assets.Code.States
 		        else if (_currentPatient.FirstName != _currentPatient.WristbandFirstName ||
 		                 _currentPatient.LastName != _currentPatient.WristbandLastName)
 		            HandleMistake(MistakeType.NameMismatch);
-		        else if (_currentPatient.Id != _currentPatient.WristbandId)
-		            HandleMistake(MistakeType.IdMismatch);
 		        else if (!_tourniquetOnPatient)
 		            HandleMistake(MistakeType.NoTourniquet);
 		        else if (!_patientPermission)
@@ -141,7 +133,7 @@ namespace Assets.Code.States
 		        _tube.StartDraw();
 		    }
             else
-		        _tube.StopDraw();
+                _tube.StopDraw();
 		}
 
         public override void Update()
@@ -192,7 +184,7 @@ namespace Assets.Code.States
 						else
 						{
 							_patientPermission = false;
-							newMessage.Text = "NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOPE. NOPE NOPE NOPE. NOPE. NOPE.";
+							newMessage.Text = "NOOOOOOOOOOOOOOOOOOOOOOPE. NOPE NOPE NOPE. NOPE. NOPE.";
 						}
                     }
                     break;
@@ -208,15 +200,6 @@ namespace Assets.Code.States
             }
 
             _messager.Publish(newMessage);
-        }
-
-        public override void TearDown()
-        {
-			_messager.CancelSubscription(_onTalkButtonClicked, _onDrawClicked, _onTourniquetOnPatient, _newPatientToken);
-
-			_uiManager.TearDown();
-
-			UnityEngine.Object.Destroy(_tubeSlider);
         }
 
         public void NewPatient()
@@ -280,5 +263,14 @@ namespace Assets.Code.States
 		{
 			NotMistakes++;
 		}
+
+        public override void TearDown()
+        {
+            _messager.CancelSubscription(_onTalkButtonClicked, _onDrawClicked, _onTourniquetOnPatient, _newPatientToken, _onVialAddedToNeedle);
+
+            _uiManager.TearDown();
+
+            UnityEngine.Object.Destroy(_tubeSlider);
+        }
     }
 }

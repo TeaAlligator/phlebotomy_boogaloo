@@ -35,6 +35,8 @@ namespace Assets.Code.Ui
         public void ToggleHasVial()
         {
             _hasVial = !_hasVial;
+            if (!_hasVial)
+                _messager.Publish(new VialRemovedFromNeedleMessage());
         }
 
         public void OnDrop(PointerEventData eventData)
